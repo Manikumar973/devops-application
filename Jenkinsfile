@@ -1,3 +1,4 @@
+groovy
 pipeline {
     agent any
 
@@ -12,15 +13,18 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
+                echo 'Creating Python virtual environment...'
+                sh 'python3 -m venv venv'
+
                 echo 'Installing Python dependencies...'
-                sh 'python3 -m pip install -r requirements.txt'
+                sh './venv/bin/pip install -r requirements.txt'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing application...'
-                sh '''python3 -c "from app import app; client=app.test_client(); response=client.get('/health'); assert response.status_code == 200; print(response.json)"'''
+                sh '''./venv/bin/python -c "from app import app; client=app.test_client(); response=client.get('/health'); assert response.status_code == 200; print(response.json)"'''
             }
         }
 
@@ -50,3 +54,4 @@ pipeline {
         }
     }
 }
+
